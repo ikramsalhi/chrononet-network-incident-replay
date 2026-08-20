@@ -25,6 +25,19 @@ function switchView(viewId) {
   });
 }
 
+function applyRuntimeMode(health) {
+  const mode = health.mode === 'online' ? 'ONLINE' : 'LOCAL';
+  const privacyFlag = document.querySelector('.privacy-flag');
+  const systemLabel = document.querySelector('.system-label');
+  const systemValue = document.querySelector('.system-value');
+  const footerState = document.querySelector('.footerbar span:last-child');
+
+  if (privacyFlag) privacyFlag.textContent = `${mode} MODE · SYNTHETIC SCENARIOS`;
+  if (systemLabel) systemLabel.textContent = health.mode === 'online' ? 'PUBLIC ANALYSIS NODE' : 'LOCAL ANALYSIS NODE';
+  if (systemValue) systemValue.textContent = health.mode === 'online' ? window.location.host : '127.0.0.1:8765';
+  if (footerState) footerState.textContent = `${mode} ANALYSIS SESSION`;
+}
+
 function renderScenario(data) {
   currentScenario = data;
   const a = data.analysis;
@@ -111,7 +124,12 @@ function escapeHtml(value) {
 
 async function boot() {
   try {
-    const data = await json('/api/scenarios');
+    const [health, data] = await Promise.all([
+      json('/api/health'),
+      json('/api/scenarios'),
+    ]);
+
+    applyRuntimeMode(health);
     $('scenarioSelect').innerHTML = data.scenarios.map(s => `<option value="${s.id}">${escapeHtml(s.name)}</option>`).join('');
     $('scenarioSelect').addEventListener('change', event => loadScenario(event.target.value));
     $('replayBtn').addEventListener('click', replay);
