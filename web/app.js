@@ -13,6 +13,18 @@ function formatSeconds(seconds) {
   return `${Math.floor(seconds / 60)}m ${seconds % 60}s`;
 }
 
+function switchView(viewId) {
+  document.querySelectorAll('.workspace-view').forEach(view => {
+    const active = view.id === viewId;
+    view.classList.toggle('active', active);
+    view.hidden = !active;
+  });
+
+  document.querySelectorAll('.command-tab').forEach(tab => {
+    tab.classList.toggle('active', tab.dataset.view === viewId);
+  });
+}
+
 function renderScenario(data) {
   currentScenario = data;
   const a = data.analysis;
@@ -69,6 +81,7 @@ function resetReplay() {
 
 function replay() {
   if (!currentScenario) return;
+  switchView('replayView');
   resetReplay();
   const events = [...document.querySelectorAll('.event')];
   let i = 0;
@@ -106,6 +119,12 @@ async function boot() {
       if (!currentScenario) return;
       window.open(`/api/scenarios/${encodeURIComponent(currentScenario.id)}/report`, '_blank');
     });
+
+    document.querySelectorAll('.command-tab').forEach(tab => {
+      tab.addEventListener('click', () => switchView(tab.dataset.view));
+    });
+
+    switchView('replayView');
     if (data.scenarios.length) await loadScenario(data.scenarios[0].id);
   } catch (error) {
     $('scenarioName').textContent = 'Workbench unavailable';
