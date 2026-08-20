@@ -10,17 +10,16 @@ from pathlib import Path
 from urllib.parse import unquote, urlparse
 
 from chrononet.analyzer import analyze_events
+from chrononet.ingest import IngestError, parse_upload
 from chrononet.report import build_markdown_report
 
 ROOT = Path(__file__).resolve().parent
 WEB_DIR = ROOT / "web"
 SCENARIO_DIR = ROOT / "data" / "scenarios"
-
-# Local development stays on 127.0.0.1:8765.
-# Cloud platforms provide PORT; when PORT exists we bind publicly inside the container.
 IS_HOSTED = bool(os.getenv("PORT") or os.getenv("RENDER"))
 HOST = os.getenv("HOST", "0.0.0.0" if IS_HOSTED else "127.0.0.1")
 PORT = int(os.getenv("PORT", "8765"))
+MAX_UPLOAD_BYTES = 12 * 1024 * 1024
 
 
 def load_scenario(scenario_id: str) -> dict:
@@ -46,7 +45,7 @@ def list_scenarios() -> list[dict]:
 
 
 class ChronoNetHandler(BaseHTTPRequestHandler):
-    server_version = "ChronoNet/1.3"
+    server_version = "ChronoNet/2.0"
 
     def log_message(self, fmt: str, *args) -> None:
         print(f"[chrononet] {self.address_string()} - {fmt % args}")
@@ -63,26 +62,20 @@ class ChronoNetHandler(BaseHTTPRequestHandler):
         self.wfile.write(body)
 
     def _json(self, status: int, payload: object) -> None:
-        self._send(
-            status,
-            json.dumps(payload, indent=2).encode("utf-8"),
-            "application/json; charset=utf-8",
-        )
+        self._send(status, json.dumps(payload, indent=2).encode("utf-8"), "application/json; charset=utf-8")
 
     def do_GET(self) -> None:
         parsed = urlparse(self.path)
         path = unquote(parsed.path)
 
         if path == "/api/health":
-            return self._json(
-                HTTPStatus.OK,
-                {
-                    "status": "ok",
-                    "service": "chrononet",
-                    "version": "1.3.0",
-                    "mode": "online" if IS_HOSTED else "local",
-                },
-            )
+            return self._json(HTTPStatus.OK, {
+                "status": "ok",
+                "service": "chrononet",
+                "version": "2.0.0",
+                "mode": "online" if IS_HOSTED else "local",
+                "upload_support": ["pcap", "json", "jsonl", "ndjson", "csv"],
+            })
         if path == "/api/scenarios":
             return self._json(HTTPStatus.OK, {"scenarios": list_scenarios()})
         if path.startswith("/api/scenarios/"):
@@ -95,11 +88,7 @@ class ChronoNetHandler(BaseHTTPRequestHandler):
                     return self._json(HTTPStatus.NOT_FOUND, {"error": "scenario_not_found"})
                 analysis = analyze_events(scenario.get("events", []))
                 report = build_markdown_report(scenario, analysis)
-                return self._send(
-                    HTTPStatus.OK,
-                    report.encode("utf-8"),
-                    "text/markdown; charset=utf-8",
-                )
+                return self._send(HTTPStatus.OK, report.encode("utf-8"), "text/markdown; charset=utf-8")
             try:
                 scenario = load_scenario(rest)
             except FileNotFoundError:
@@ -114,34 +103,67 @@ class ChronoNetHandler(BaseHTTPRequestHandler):
         if not candidate.is_file():
             candidate = WEB_DIR / "index.html"
         mime, _ = mimetypes.guess_type(candidate.name)
-        self._send(
-            HTTPStatus.OK,
-            candidate.read_bytes(),
-            (mime or "application/octet-stream") + "; charset=utf-8",
-        )
+        self._send(HTTPStatus.OK, candidate.read_bytes(), (mime or "application/octet-stream") + "; charset=utf-8")
 
     def do_POST(self) -> None:
-        if self.path != "/api/analyze":
-            return self._json(HTTPStatus.NOT_FOUND, {"error": "not_found"})
-        try:
-            length = min(int(self.headers.get("Content-Length", "0")), 2_000_000)
-            payload = json.loads(self.rfile.read(length) or b"{}")
-            events = payload.get("events", [])
-            if not isinstance(events, list):
-                raise ValueError("events must be a list")
-            return self._json(HTTPStatus.OK, {"analysis": analyze_events(events)})
-        except (json.JSONDecodeError, ValueError) as exc:
-            return self._json(
-                HTTPStatus.BAD_REQUEST,
-                {"error": "invalid_payload", "detail": str(exc)},
-            )
+        parsed = urlparse(self.path)
+
+        if parsed.path == "/api/import":
+            try:
+                declared = int(self.headers.get("Content-Length", "0"))
+                if declared <= 0:
+                    raise IngestError("No capture data was uploaded.")
+                if declared > MAX_UPLOAD_BYTES:
+                    return self._json(HTTPStatus.REQUEST_ENTITY_TOO_LARGE, {
+                        "error": "file_too_large",
+                        "detail": "Maximum upload size is 12 MB for this public demo.",
+                    })
+                filename = unquote(self.headers.get("X-Filename", "capture.pcap")).strip() or "capture.pcap"
+                raw = self.rfile.read(declared)
+                imported = parse_upload(raw, filename)
+                events = imported["events"]
+                analysis = analyze_events(events)
+                capture = imported["capture"]
+                scenario = {
+                    "id": "uploaded-capture",
+                    "name": f"Capture: {capture.get('filename', 'uploaded file')}",
+                    "description": f"Imported network evidence · {capture.get('event_records', len(events))} decoded event(s).",
+                    "category": "uploaded-capture",
+                    "events": events,
+                    "capture": capture,
+                    "analysis": analysis,
+                }
+                return self._json(HTTPStatus.OK, scenario)
+            except IngestError as exc:
+                return self._json(HTTPStatus.BAD_REQUEST, {"error": "ingest_failed", "detail": str(exc)})
+            except Exception as exc:
+                print(f"[chrononet] upload error: {exc}")
+                return self._json(HTTPStatus.INTERNAL_SERVER_ERROR, {
+                    "error": "ingest_error",
+                    "detail": "ChronoNet could not process this capture.",
+                })
+
+        if parsed.path == "/api/analyze":
+            try:
+                length = min(int(self.headers.get("Content-Length", "0")), 2_000_000)
+                payload = json.loads(self.rfile.read(length) or b"{}")
+                events = payload.get("events", [])
+                if not isinstance(events, list):
+                    raise ValueError("events must be a list")
+                return self._json(HTTPStatus.OK, {"analysis": analyze_events(events)})
+            except (json.JSONDecodeError, ValueError) as exc:
+                return self._json(HTTPStatus.BAD_REQUEST, {
+                    "error": "invalid_payload",
+                    "detail": str(exc),
+                })
+
+        return self._json(HTTPStatus.NOT_FOUND, {"error": "not_found"})
 
 
 def main() -> None:
     port = PORT
     if len(sys.argv) > 1:
         port = int(sys.argv[1])
-
     server = ThreadingHTTPServer((HOST, port), ChronoNetHandler)
     mode = "ONLINE/HOSTED" if IS_HOSTED else "LOCAL"
 
@@ -151,8 +173,8 @@ def main() -> None:
         print(f"Listening publicly on {HOST}:{port}")
     else:
         print(f"Open: http://{HOST}:{port}")
+    print("Capture import: PCAP / JSON / JSONL / CSV")
     print("Press Ctrl+C to stop.\n")
-
     try:
         server.serve_forever()
     except KeyboardInterrupt:
