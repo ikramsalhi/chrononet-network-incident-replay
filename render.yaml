@@ -3,7 +3,7 @@ services:
     name: chrononet-network-incident-replay
     runtime: python
     plan: free
-    buildCommand: ""
+    buildCommand: python -m compileall .
     startCommand: python app.py
     healthCheckPath: /api/health
     autoDeploy: true
