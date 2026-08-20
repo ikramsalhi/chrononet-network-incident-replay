@@ -6,18 +6,13 @@
   <meta name="description" content="ChronoNet network incident replay and root-cause workbench" />
   <title>ChronoNet // Incident Workbench</title>
   <link rel="stylesheet" href="/styles.css" />
+  <link rel="stylesheet" href="/import.css" />
 </head>
 <body>
   <div class="app-frame">
     <header class="topbar">
-      <div class="brand-block">
-        <div class="brand-mark">CN</div>
-        <div><strong>CHRONONET</strong><span>NETWORK FORENSICS WORKBENCH</span></div>
-      </div>
-      <div class="topbar-center">
-        <span id="nodeLabel" class="system-label">ANALYSIS NODE</span>
-        <span id="nodeValue" class="system-value">connecting…</span>
-      </div>
+      <div class="brand-block"><div class="brand-mark">CN</div><div><strong>CHRONONET</strong><span>NETWORK FORENSICS WORKBENCH</span></div></div>
+      <div class="topbar-center"><span id="nodeLabel" class="system-label">ANALYSIS NODE</span><span id="nodeValue" class="system-value">connecting…</span></div>
       <div class="engine-state"><span class="state-light"></span><div><small>ENGINE</small><strong id="engineMode">READY</strong></div></div>
     </header>
 
@@ -34,31 +29,14 @@
 
     <main class="workspace">
       <section class="incident-header common-incident-header">
-        <div class="incident-copy">
-          <div class="section-code">ACTIVE INVESTIGATION</div>
-          <h1 id="scenarioName">Loading incident…</h1>
-          <p id="scenarioDescription">Loading scenario metadata.</p>
-        </div>
-        <div class="incident-controls">
-          <label for="scenarioSelect">DEMO SCENARIO</label>
-          <select id="scenarioSelect" aria-label="Choose incident scenario"></select>
-          <button id="reportBtn" class="btn">EXPORT REPORT</button>
-        </div>
+        <div class="incident-copy"><div class="section-code">ACTIVE INVESTIGATION</div><h1 id="scenarioName">Loading incident…</h1><p id="scenarioDescription">Loading scenario metadata.</p></div>
+        <div class="incident-controls"><label for="scenarioSelect">DEMO SCENARIO</label><select id="scenarioSelect" aria-label="Choose incident scenario"></select><button id="reportBtn" class="btn">EXPORT REPORT</button></div>
       </section>
 
       <section id="importView" class="workspace-view" hidden>
-        <div class="view-heading">
-          <div><span>00 / EVIDENCE INTAKE</span><h2>Import network evidence</h2></div>
-          <p>Analyze a real capture or structured event log. Uploaded files are processed in memory and are not stored by ChronoNet.</p>
-        </div>
+        <div class="view-heading"><div><span>00 / EVIDENCE INTAKE</span><h2>Import network evidence</h2></div><p>Analyze a real capture or structured event log. Uploaded files are processed in memory and are not stored by ChronoNet.</p></div>
         <article class="module import-module">
-          <div id="dropZone" class="drop-zone">
-            <div class="drop-code">CAPTURE INPUT</div>
-            <h3>Drop a capture here</h3>
-            <p>Classic PCAP, JSON, JSONL/NDJSON or CSV · maximum 12 MB</p>
-            <input id="captureFile" type="file" accept=".pcap,.json,.jsonl,.ndjson,.csv" hidden />
-            <button id="chooseFileBtn" class="btn btn-primary">CHOOSE FILE</button>
-          </div>
+          <div id="dropZone" class="drop-zone"><div class="drop-code">CAPTURE INPUT</div><h3>Drop a capture here</h3><p>Classic PCAP, JSON, JSONL/NDJSON or CSV · maximum 12 MB</p><input id="captureFile" type="file" accept=".pcap,.json,.jsonl,.ndjson,.csv" hidden /><button id="chooseFileBtn" class="btn btn-primary">CHOOSE FILE</button></div>
           <div class="import-side">
             <div class="ingest-row"><span>PCAP</span><strong>Ethernet / raw IP</strong></div>
             <div class="ingest-row"><span>DECODE</span><strong>IPv4 · IPv6 · TCP · UDP · ICMP</strong></div>
@@ -78,27 +56,17 @@
           <article class="telemetry-cell"><span class="metric-index">C</span><div><small>AFFECTED NODES</small><strong id="nodeCount">--</strong><em>endpoints</em></div></article>
           <article class="telemetry-cell"><span class="metric-index">D</span><div><small>INCIDENT WINDOW</small><strong id="duration">--</strong><em>elapsed</em></div></article>
         </section>
-        <article class="module module-timeline full-module">
-          <header class="module-head"><div><span class="module-number">02</span><div><small>EVENT STREAM</small><h2>Replay timeline</h2></div></div><span id="replayState" class="run-state">READY</span></header>
-          <div class="timeline-columns"><span>TIME</span><span>LVL</span><span>EVENT / PATH / MESSAGE</span></div>
-          <div id="timeline" class="timeline"></div>
-        </article>
+        <article class="module module-timeline full-module"><header class="module-head"><div><span class="module-number">02</span><div><small>EVENT STREAM</small><h2>Replay timeline</h2></div></div><span id="replayState" class="run-state">READY</span></header><div class="timeline-columns"><span>TIME</span><span>LVL</span><span>EVENT / PATH / MESSAGE</span></div><div id="timeline" class="timeline"></div></article>
       </section>
 
       <section id="correlationView" class="workspace-view" hidden>
         <div class="view-heading"><div><span>03 / CORRELATION</span><h2>Root-cause analysis</h2></div><p>ChronoNet correlates related symptoms and ranks the strongest explainable cause.</p></div>
-        <article class="module module-finding correlation-module">
-          <header class="module-head"><div><span class="module-number">03</span><div><small>CORRELATION OUTPUT</small><h2>Probable root cause</h2></div></div></header>
-          <div class="correlation-layout"><div id="finding"></div><div class="evidence-column"><div class="evidence-label">SUPPORTING EVIDENCE</div><div id="evidence" class="evidence"></div></div></div>
-        </article>
+        <article class="module module-finding correlation-module"><header class="module-head"><div><span class="module-number">03</span><div><small>CORRELATION OUTPUT</small><h2>Probable root cause</h2></div></div></header><div class="correlation-layout"><div id="finding"></div><div class="evidence-column"><div class="evidence-label">SUPPORTING EVIDENCE</div><div id="evidence" class="evidence"></div></div></div></article>
       </section>
 
       <section id="impactView" class="workspace-view" hidden>
         <div class="view-heading"><div><span>04 / IMPACT</span><h2>Blast-radius assessment</h2></div><p>Review affected endpoints and dominant event classes.</p></div>
-        <section class="lower-grid impact-grid">
-          <article class="module"><header class="module-head"><div><span class="module-number">04</span><div><small>IMPACT MAP</small><h2>Affected endpoints</h2></div></div></header><div id="nodes" class="nodes"></div></article>
-          <article class="module"><header class="module-head"><div><span class="module-number">05</span><div><small>SIGNAL PROFILE</small><h2>Event distribution</h2></div></div></header><div id="bars" class="bars"></div></article>
-        </section>
+        <section class="lower-grid impact-grid"><article class="module"><header class="module-head"><div><span class="module-number">04</span><div><small>IMPACT MAP</small><h2>Affected endpoints</h2></div></div></header><div id="nodes" class="nodes"></div></article><article class="module"><header class="module-head"><div><span class="module-number">05</span><div><small>SIGNAL PROFILE</small><h2>Event distribution</h2></div></div></header><div id="bars" class="bars"></div></article></section>
       </section>
     </main>
 
