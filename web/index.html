@@ -34,18 +34,18 @@
 
     <div class="command-strip">
       <div class="command-id">CASE / <span id="caseCode">CN-LOCAL</span></div>
-      <div class="command-tabs" aria-label="Workbench sections">
-        <span class="command-tab active">REPLAY</span>
-        <span class="command-tab">CORRELATION</span>
-        <span class="command-tab">IMPACT</span>
-      </div>
-      <div class="privacy-flag">OFFLINE · SYNTHETIC DATA</div>
+      <nav class="command-tabs" aria-label="Workbench sections">
+        <button type="button" class="command-tab active" data-view="replayView">REPLAY</button>
+        <button type="button" class="command-tab" data-view="correlationView">CORRELATION</button>
+        <button type="button" class="command-tab" data-view="impactView">IMPACT</button>
+      </nav>
+      <div class="privacy-flag">LOCAL MODE · SYNTHETIC SCENARIOS</div>
     </div>
 
     <main class="workspace">
-      <section class="incident-header">
+      <section class="incident-header common-incident-header">
         <div class="incident-copy">
-          <div class="section-code">01 / ACTIVE INCIDENT</div>
+          <div class="section-code">ACTIVE INCIDENT</div>
           <h1 id="scenarioName">Loading incident…</h1>
           <p id="scenarioDescription">Loading scenario metadata.</p>
         </div>
@@ -53,32 +53,36 @@
         <div class="incident-controls">
           <label for="scenarioSelect">SCENARIO</label>
           <select id="scenarioSelect" aria-label="Choose incident scenario"></select>
-          <button id="replayBtn" class="btn btn-primary">START REPLAY</button>
           <button id="reportBtn" class="btn">EXPORT REPORT</button>
         </div>
       </section>
 
-      <section class="telemetry-strip" aria-label="Incident metrics">
-        <article class="telemetry-cell">
-          <span class="metric-index">A</span>
-          <div><small>HEALTH SCORE</small><strong id="healthScore">--</strong><em>/100</em></div>
-        </article>
-        <article class="telemetry-cell">
-          <span class="metric-index">B</span>
-          <div><small>EVENTS CORRELATED</small><strong id="eventCount">--</strong><em>records</em></div>
-        </article>
-        <article class="telemetry-cell">
-          <span class="metric-index">C</span>
-          <div><small>AFFECTED NODES</small><strong id="nodeCount">--</strong><em>endpoints</em></div>
-        </article>
-        <article class="telemetry-cell">
-          <span class="metric-index">D</span>
-          <div><small>INCIDENT WINDOW</small><strong id="duration">--</strong><em>elapsed</em></div>
-        </article>
-      </section>
+      <section id="replayView" class="workspace-view active" aria-label="Replay workspace">
+        <div class="view-heading">
+          <div><span>01 / REPLAY</span><h2>Incident reconstruction</h2></div>
+          <button id="replayBtn" class="btn btn-primary">START REPLAY</button>
+        </div>
 
-      <section class="analysis-grid">
-        <article class="module module-timeline">
+        <section class="telemetry-strip" aria-label="Incident metrics">
+          <article class="telemetry-cell">
+            <span class="metric-index">A</span>
+            <div><small>HEALTH SCORE</small><strong id="healthScore">--</strong><em>/100</em></div>
+          </article>
+          <article class="telemetry-cell">
+            <span class="metric-index">B</span>
+            <div><small>EVENTS CORRELATED</small><strong id="eventCount">--</strong><em>records</em></div>
+          </article>
+          <article class="telemetry-cell">
+            <span class="metric-index">C</span>
+            <div><small>AFFECTED NODES</small><strong id="nodeCount">--</strong><em>endpoints</em></div>
+          </article>
+          <article class="telemetry-cell">
+            <span class="metric-index">D</span>
+            <div><small>INCIDENT WINDOW</small><strong id="duration">--</strong><em>elapsed</em></div>
+          </article>
+        </section>
+
+        <article class="module module-timeline full-module">
           <header class="module-head">
             <div>
               <span class="module-number">02</span>
@@ -91,47 +95,65 @@
           </div>
           <div id="timeline" class="timeline"></div>
         </article>
+      </section>
 
-        <article class="module module-finding">
+      <section id="correlationView" class="workspace-view" aria-label="Correlation workspace" hidden>
+        <div class="view-heading">
+          <div><span>03 / CORRELATION</span><h2>Root-cause analysis</h2></div>
+          <p>ChronoNet compares related symptoms and ranks the strongest explanation for the incident.</p>
+        </div>
+
+        <article class="module module-finding correlation-module">
           <header class="module-head">
             <div>
               <span class="module-number">03</span>
               <div><small>CORRELATION OUTPUT</small><h2>Probable root cause</h2></div>
             </div>
           </header>
-          <div id="finding"></div>
-          <div class="evidence-label">SUPPORTING EVIDENCE</div>
-          <div id="evidence" class="evidence"></div>
+          <div class="correlation-layout">
+            <div id="finding"></div>
+            <div class="evidence-column">
+              <div class="evidence-label">SUPPORTING EVIDENCE</div>
+              <div id="evidence" class="evidence"></div>
+            </div>
+          </div>
         </article>
       </section>
 
-      <section class="lower-grid">
-        <article class="module">
-          <header class="module-head">
-            <div>
-              <span class="module-number">04</span>
-              <div><small>IMPACT MAP</small><h2>Affected endpoints</h2></div>
-            </div>
-          </header>
-          <div id="nodes" class="nodes"></div>
-        </article>
+      <section id="impactView" class="workspace-view" aria-label="Impact workspace" hidden>
+        <div class="view-heading">
+          <div><span>04 / IMPACT</span><h2>Blast-radius assessment</h2></div>
+          <p>Review which endpoints were affected and which event classes dominated the incident.</p>
+        </div>
 
-        <article class="module">
-          <header class="module-head">
-            <div>
-              <span class="module-number">05</span>
-              <div><small>SIGNAL PROFILE</small><h2>Event distribution</h2></div>
-            </div>
-          </header>
-          <div id="bars" class="bars"></div>
-        </article>
+        <section class="lower-grid impact-grid">
+          <article class="module">
+            <header class="module-head">
+              <div>
+                <span class="module-number">04</span>
+                <div><small>IMPACT MAP</small><h2>Affected endpoints</h2></div>
+              </div>
+            </header>
+            <div id="nodes" class="nodes"></div>
+          </article>
+
+          <article class="module">
+            <header class="module-head">
+              <div>
+                <span class="module-number">05</span>
+                <div><small>SIGNAL PROFILE</small><h2>Event distribution</h2></div>
+              </div>
+            </header>
+            <div id="bars" class="bars"></div>
+          </article>
+        </section>
       </section>
     </main>
 
     <footer class="footerbar">
-      <span>CHRONONET / v1.1</span>
+      <span>CHRONONET / v1.2</span>
       <span>NETWORK FORENSICS · INCIDENT REPLAY · ROOT-CAUSE CORRELATION</span>
-      <span>LOCAL SESSION</span>
+      <span>LOCAL ANALYSIS SESSION</span>
     </footer>
   </div>
 
