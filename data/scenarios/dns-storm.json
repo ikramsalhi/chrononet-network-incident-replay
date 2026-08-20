@@ -1,0 +1,17 @@
+{
+  "id": "dns-storm",
+  "name": "DNS Resolver Slowdown",
+  "category": "Name resolution",
+  "description": "Multiple clients experience slow and timed-out DNS requests while basic gateway reachability remains healthy.",
+  "events": [
+    {"timestamp":"2026-08-20T08:41:00Z","source":"ws-finance-01","target":"10.20.0.53","type":"dns_query","service":"DNS","status":"ok","latency_ms":42,"severity":"info","message":"A query for intranet.local"},
+    {"timestamp":"2026-08-20T08:41:12Z","source":"ws-finance-03","target":"10.20.0.53","type":"dns_query","service":"DNS","status":"slow","latency_ms":812,"severity":"medium","message":"Slow resolver response"},
+    {"timestamp":"2026-08-20T08:41:21Z","source":"laptop-ops-04","target":"10.20.0.53","type":"dns_query","service":"DNS","status":"timeout","latency_ms":2000,"severity":"high","message":"Resolver timed out"},
+    {"timestamp":"2026-08-20T08:41:35Z","source":"ws-finance-01","target":"10.20.0.1","type":"gateway_probe","service":"ICMP","status":"ok","latency_ms":3,"packet_loss_pct":0,"severity":"info","message":"Gateway reachable"},
+    {"timestamp":"2026-08-20T08:41:47Z","source":"ws-finance-01","target":"10.20.0.53","type":"dns_query","service":"DNS","status":"timeout","latency_ms":2000,"severity":"high","message":"Second DNS timeout"},
+    {"timestamp":"2026-08-20T08:42:02Z","source":"laptop-ops-04","target":"crm.internal","type":"application_error","service":"Application","status":"name_resolution_failed","severity":"high","message":"Application cannot resolve backend hostname"},
+    {"timestamp":"2026-08-20T08:42:14Z","source":"ws-finance-03","target":"10.20.0.53","type":"dns_query","service":"DNS","status":"slow","latency_ms":1024,"severity":"medium","message":"Resolver latency increased"},
+    {"timestamp":"2026-08-20T08:42:40Z","source":"ws-finance-02","target":"10.20.0.53","type":"dns_query","service":"DNS","status":"timeout","latency_ms":2000,"severity":"high","message":"DNS timeout from another client"},
+    {"timestamp":"2026-08-20T08:43:05Z","source":"ws-finance-03","target":"10.20.0.1","type":"gateway_probe","service":"ICMP","status":"ok","latency_ms":4,"packet_loss_pct":0,"severity":"info","message":"Gateway still reachable"}
+  ]
+}

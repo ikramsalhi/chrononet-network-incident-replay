@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="ChronoNet network incident replay and explainable root-cause workbench" />
+  <title>ChronoNet — Incident Replay</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand"><span class="logo">C</span><div><strong>ChronoNet</strong><small>incident workbench</small></div></div>
+      <nav>
+        <button class="nav active">▦ <span>Incident replay</span></button>
+        <button class="nav">⌁ <span>Correlation</span></button>
+        <button class="nav">◎ <span>Blast radius</span></button>
+      </nav>
+      <div class="sidebar-note">
+        <span class="pulse"></span>
+        <div><strong>Offline-first</strong><small>No packets leave your machine.</small></div>
+      </div>
+    </aside>
+
+    <main>
+      <header>
+        <div><p class="eyebrow">NETWORK FORENSICS LAB</p><h1>Replay the failure. Explain the cause.</h1></div>
+        <div class="status"><span></span> analysis engine ready</div>
+      </header>
+
+      <section class="hero-card">
+        <div>
+          <p class="eyebrow">ACTIVE SCENARIO</p>
+          <h2 id="scenarioName">Loading…</h2>
+          <p id="scenarioDescription" class="muted"></p>
+        </div>
+        <div class="hero-actions">
+          <select id="scenarioSelect" aria-label="Choose incident scenario"></select>
+          <button id="replayBtn" class="primary">▶ Replay incident</button>
+          <button id="reportBtn" class="secondary">↓ Export report</button>
+        </div>
+      </section>
+
+      <section class="metrics">
+        <article><span>Health score</span><strong id="healthScore">--</strong><small>/100</small></article>
+        <article><span>Events</span><strong id="eventCount">--</strong><small>correlated</small></article>
+        <article><span>Affected nodes</span><strong id="nodeCount">--</strong><small>blast radius</small></article>
+        <article><span>Incident window</span><strong id="duration">--</strong><small>seconds</small></article>
+      </section>
+
+      <section class="grid">
+        <article class="panel timeline-panel">
+          <div class="panel-head"><div><p class="eyebrow">EVENT STREAM</p><h3>Incident timeline</h3></div><span id="replayState" class="chip">ready</span></div>
+          <div id="timeline" class="timeline"></div>
+        </article>
+
+        <article class="panel finding-panel">
+          <div class="panel-head"><div><p class="eyebrow">EXPLAINABLE CORRELATION</p><h3>Root-cause hypothesis</h3></div></div>
+          <div id="finding"></div>
+          <div id="evidence" class="evidence"></div>
+        </article>
+      </section>
+
+      <section class="grid bottom-grid">
+        <article class="panel">
+          <div class="panel-head"><div><p class="eyebrow">BLAST RADIUS</p><h3>Affected endpoints</h3></div></div>
+          <div id="nodes" class="nodes"></div>
+        </article>
+        <article class="panel">
+          <div class="panel-head"><div><p class="eyebrow">SIGNAL MIX</p><h3>Event distribution</h3></div></div>
+          <div id="bars" class="bars"></div>
+        </article>
+      </section>
+
+      <footer>ChronoNet v1.0 · dependency-light network incident analysis · safe synthetic scenarios</footer>
+    </main>
+  </div>
+  <script src="/app.js"></script>
+</body>
+</html>

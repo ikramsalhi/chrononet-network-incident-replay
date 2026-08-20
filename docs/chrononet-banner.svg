@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="360" viewBox="0 0 1200 360" role="img" aria-label="ChronoNet network incident replay">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#07100f"/><stop offset="1" stop-color="#102a22"/></linearGradient><filter id="glow"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+<rect width="1200" height="360" rx="28" fill="url(#g)"/>
+<g stroke="#24463b" stroke-width="1" opacity=".65"><path d="M0 75H1200M0 145H1200M0 215H1200M0 285H1200"/><path d="M110 0V360M260 0V360M410 0V360M560 0V360M710 0V360M860 0V360M1010 0V360"/></g>
+<g fill="none" stroke="#72f2b1" stroke-width="4" filter="url(#glow)"><path d="M90 255 C180 245 200 100 300 190 S430 300 530 140 S690 100 760 205 S910 295 1110 115"/></g>
+<g fill="#72f2b1"><circle cx="90" cy="255" r="7"/><circle cx="300" cy="190" r="7"/><circle cx="530" cy="140" r="7"/><circle cx="760" cy="205" r="7"/><circle cx="1110" cy="115" r="7"/></g>
+<text x="72" y="88" fill="#72f2b1" font-family="Segoe UI,Arial,sans-serif" font-size="18" font-weight="700" letter-spacing="4">NETWORK FORENSICS</text>
+<text x="72" y="145" fill="#eef8f4" font-family="Segoe UI,Arial,sans-serif" font-size="52" font-weight="800">ChronoNet</text>
+<text x="72" y="181" fill="#9bb0aa" font-family="Segoe UI,Arial,sans-serif" font-size="20">Replay incidents · correlate symptoms · explain root cause</text>
+<rect x="72" y="215" width="260" height="42" rx="21" fill="#11241e" stroke="#315b4d"/><circle cx="96" cy="236" r="6" fill="#72f2b1"/><text x="112" y="243" fill="#cfe2dc" font-family="Segoe UI,Arial,sans-serif" font-size="15">dependency-light · offline-first</text>
+</svg>

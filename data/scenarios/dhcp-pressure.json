@@ -1,0 +1,14 @@
+{
+  "id": "dhcp-pressure",
+  "name": "DHCP Pool Exhaustion",
+  "category": "Address management",
+  "description": "New clients cannot obtain leases while existing clients remain online, indicating address-pool pressure rather than a full network outage.",
+  "events": [
+    {"timestamp":"2026-08-20T10:05:00Z","source":"guest-phone-21","target":"dhcp-vlan30","type":"dhcp_discover","service":"DHCP","status":"no lease","severity":"high","message":"No address offered"},
+    {"timestamp":"2026-08-20T10:05:11Z","source":"guest-laptop-05","target":"dhcp-vlan30","type":"dhcp_discover","service":"DHCP","status":"failed","severity":"high","message":"Lease allocation failed"},
+    {"timestamp":"2026-08-20T10:05:23Z","source":"tablet-meeting-02","target":"dhcp-vlan30","type":"dhcp_discover","service":"DHCP","status":"timeout","severity":"high","message":"DHCP request timed out"},
+    {"timestamp":"2026-08-20T10:05:36Z","source":"existing-client-08","target":"10.30.0.1","type":"gateway_probe","service":"ICMP","status":"ok","latency_ms":5,"packet_loss_pct":0,"severity":"info","message":"Existing lease still has connectivity"},
+    {"timestamp":"2026-08-20T10:05:49Z","source":"guest-phone-24","target":"dhcp-vlan30","type":"dhcp_discover","service":"DHCP","status":"failed","severity":"high","message":"Lease allocation failed"},
+    {"timestamp":"2026-08-20T10:06:08Z","source":"guest-laptop-07","target":"dhcp-vlan30","type":"dhcp_discover","service":"DHCP","status":"exhausted","severity":"critical","message":"Pool has no free leases"}
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "gateway-flap",
+  "name": "Gateway / Uplink Instability",
+  "category": "Connectivity",
+  "description": "A branch gateway becomes unstable and an uplink flaps repeatedly, affecting clients across two VLANs.",
+  "events": [
+    {"timestamp":"2026-08-20T09:12:00Z","source":"switch-edge-01","target":"uplink-ge0/1","type":"link_state","service":"Ethernet","status":"down","severity":"critical","message":"Link down"},
+    {"timestamp":"2026-08-20T09:12:04Z","source":"pc-vlan10-01","target":"default-gateway","type":"gateway_probe","service":"ICMP","status":"unreachable","latency_ms":0,"packet_loss_pct":100,"severity":"critical","message":"Gateway unreachable"},
+    {"timestamp":"2026-08-20T09:12:07Z","source":"pc-vlan20-02","target":"default-gateway","type":"gateway_probe","service":"ICMP","status":"unreachable","latency_ms":0,"packet_loss_pct":100,"severity":"critical","message":"Gateway unreachable"},
+    {"timestamp":"2026-08-20T09:12:11Z","source":"switch-edge-01","target":"uplink-ge0/1","type":"link_state","service":"Ethernet","status":"up","severity":"high","message":"Link restored"},
+    {"timestamp":"2026-08-20T09:12:18Z","source":"pc-vlan10-01","target":"default-gateway","type":"gateway_probe","service":"ICMP","status":"degraded","latency_ms":189,"packet_loss_pct":35,"severity":"high","message":"Gateway packet loss"},
+    {"timestamp":"2026-08-20T09:12:25Z","source":"switch-edge-01","target":"uplink-ge0/1","type":"link_state","service":"Ethernet","status":"down","severity":"critical","message":"Link down again"},
+    {"timestamp":"2026-08-20T09:12:29Z","source":"switch-edge-01","target":"uplink-ge0/1","type":"link_state","service":"Ethernet","status":"up","severity":"high","message":"Link restored again"},
+    {"timestamp":"2026-08-20T09:12:34Z","source":"pc-vlan20-02","target":"default-gateway","type":"gateway_probe","service":"ICMP","status":"degraded","latency_ms":220,"packet_loss_pct":62,"severity":"critical","message":"Severe gateway loss"},
+    {"timestamp":"2026-08-20T09:12:42Z","source":"switch-edge-01","target":"uplink-ge0/1","type":"link_state","service":"Ethernet","status":"down","severity":"critical","message":"Third link drop"}
+  ]
+}
